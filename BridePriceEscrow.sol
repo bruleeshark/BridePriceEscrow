@@ -40,12 +40,19 @@ contract BridePriceEscrow {
     }
     
     function withdraw() public {
-        require(msg.sender == groom, "Only the groom can withdraw the escrowed funds.");
+        require((msg.sender == groom || msg.sender == bride), "Only the bride or groom can withdraw the escrowed funds.");
         require(trustedThirdParty != address(0), "The trusted third party has not been set yet.");
         require(weddingConfirmed == true, "The wedding has not been confirmed yet.");
-        require(groomWithdrawn == false, "The groom has already withdrawn the funds.");
-        groomWithdrawn = true;
-        groom.transfer(amount);
+        if (msg.sender == groom) {
+            require(groomWithdrawn == false, "The groom has already withdrawn the funds.");
+            groomWithdrawn = true;
+            groom.transfer(amount);
+        } else {
+            require(bridePriceSent == true, "The bride price has not been sent yet.");
+            require(groomWithdrawn == false, "The groom has already withdrawn the funds.");
+            bridePriceSent = false;
+            bride.transfer(amount);
+        }
         emit FundsWithdrawn();
     }
     
