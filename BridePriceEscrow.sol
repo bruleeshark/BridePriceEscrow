@@ -39,7 +39,7 @@ contract BridePriceEscrow {
         emit WeddingConfirmed();
     }
     
-    function withdraw() public {
+    function withdraw() public payable {
         require((msg.sender == groom || msg.sender == bride), "Only the bride or groom can withdraw the escrowed funds.");
         require(trustedThirdParty != address(0), "The trusted third party has not been set yet.");
         require(weddingConfirmed == true, "The wedding has not been confirmed yet.");
